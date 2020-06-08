@@ -19,7 +19,7 @@ export default class userData {
 
     static haveAddZm: boolean = false;
 
-    static userItem = [0, 0, 0, 0];
+    static userItem = [0];
     static level = [1, 1, 1, 1, 1, 1];
     static levelExplain = [0, 0, 0, 0, 0, 0];
 
@@ -119,6 +119,7 @@ export default class userData {
 
     static getLocalData() {
         var userData = cc.sys.localStorage.getItem('userData');
+        this.isTodayGetSign();
         if (userData) {
             userData = JSON.parse(userData);
             if (userData.userItem) {
@@ -209,17 +210,7 @@ export default class userData {
         cc.sys.localStorage.setItem('userData', JSON.stringify(userData));
     }
 
-    static dataExist(dataName) {
-        let data = cc.sys.localStorage.getItem(dataName);
-        if (data) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    static save(dataName, data) {
+    static saveSigin(dataName, data) {
         cc.sys.localStorage.setItem(dataName, JSON.stringify(data));
     }
 
@@ -233,52 +224,74 @@ export default class userData {
         return null;
     }
 
+    static signData = [0, 0, 0, 0, 0, 0, 0];
+    static signDay = 0;
+    static lastSignTime = Date.now();
+
+    static initSign() {
+        this.signData = [0, 0, 0, 0, 0, 0, 0];
+        this.signDay = 0;
+        this.lastSignTime = Date.now();
+    }
 
     static isTodayGetSign() {
-        let dailyAwardLastDate = 0;
-        let userSignData = [0, 0, 0, 0, 0, 0, 0];
+
         let data = this.loadLocalData("SignData");
         if (!data) {
-            dailyAwardLastDate = 0;
-            userSignData = [0, 0, 0, 0, 0, 0, 0];
+            this.initSign();
         }
         else {
-            dailyAwardLastDate = data.dateReward;
-            userSignData = data.userSignData;
+            this.signData = data.signData;
+            this.signDay = data.signDay;
+            this.lastSignTime = data.lastSignTime;
         }
 
-        if (dailyAwardLastDate === 0) {
-            return false;
-        } else {
+        if (this.lastSignTime != 0) {
             let now = new Date();
             let nowYear = now.getFullYear();
             let nowMonth = now.getMonth();
             let nowDate = now.getDate();
-            let awardDate = new Date(dailyAwardLastDate);
+
+            let awardDate = new Date(this.lastSignTime);
             let year = awardDate.getFullYear();
             let month = awardDate.getMonth();
             let date = awardDate.getDate();
-            if (year !== nowYear || month !== nowMonth || date !== nowDate) {
 
-                var isallget = this.isAllGet(userSignData);
-                if (isallget || userSignData[6] === 1) {
-                    return true;
+            if (nowYear > year) {
+                this.initSign();
+            } else if (nowYear == year && nowMonth > month) {
+                if ((nowMonth - month) > 1) {
+                    this.initSign();
+                } else {
+                    let nowstamp = new Date().getTime();
+                    let stamp = new Date(this.lastSignTime).getTime();
+                    let diff_socend = (nowstamp - stamp) / 1000;
+                    let diff_day = diff_socend / (24 * 3600);
+                    diff_day = Math.ceil(diff_day);
+                    let sDay = 7 - this.signDay;
+                    if (diff_day > sDay) {
+                        this.initSign();
+                    } else {
+                        this.signDay += diff_day;
+                    }
                 }
-                return false;
 
-            } else {
-                return true;
+            } else if (nowYear == year && nowMonth == month && nowDate > date) {
+                let diff_day = nowDate - date;
+                this.signDay += diff_day;
             }
         }
+        // this.setSignData();
     }
 
-    static isAllGet(data) {
-        cc.log("data.length = ", data.length);
-        for (let i = 0; i < data.length; i++) {
-            if (data[i] === 0)
-                return false;
-        }
-        return true;
+    static setSignData() {
+        let signData = {
+            signData: this.signData,
+            signDay: this.signDay,
+            lastSignTime: this.lastSignTime,
+        };
+        console.log("签到data", JSON.stringify(signData));
+        this.saveSigin('SignData', signData);
     }
 
 }
