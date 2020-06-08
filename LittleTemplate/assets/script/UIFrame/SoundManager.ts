@@ -1,5 +1,4 @@
 import CocosHelper from "./CocosHelper";
-import userData from "./config/userData";
 
 /**
  * 声音管理
@@ -19,13 +18,11 @@ export default class SoundManager {
             cc.audioEngine.setMusicVolume(obj.musicVolume);
             cc.audioEngine.setEffectsVolume(obj.effectVolume);
         } else {
-            cc.audioEngine.setMusicVolume(1);
-            cc.audioEngine.setEffectsVolume(1);
+            this.setSoundVolume(0.3, 0.3);
         }
     }
     /** 播放背景音乐 */
     public async playBackGroundMusic(url: string = 'sound/bgm', volume: number = 0.3) {
-        if (userData.MusinOn) return;
         let sound = await CocosHelper.loadRes(url, cc.AudioClip) as cc.AudioClip;
         if (volume != undefined) {
             cc.audioEngine.setMusicVolume(volume);
@@ -36,17 +33,12 @@ export default class SoundManager {
 
     /** 播放音效,不用担心会重复loadRes会消耗网络, 有缓存 */
     public async playEffectMusic(url: string, volume: number = 0.2) {
-        if (userData.SoundOn) return;
         if (!url || url.length === 0) return;
         let sound = await CocosHelper.loadRes(url, cc.AudioClip) as cc.AudioClip;
         if (volume != undefined) {
             cc.audioEngine.setEffectsVolume(volume);
         }
         cc.audioEngine.playEffect(sound, false);
-    }
-
-    public stopMusic() {
-        cc.audioEngine.stopMusic();
     }
 
     /** 打开声音 */
@@ -58,10 +50,6 @@ export default class SoundManager {
             cc.audioEngine.setEffectsVolume(effectVolume);
         }
         this.setVolumeToLocal(cc.audioEngine.getMusicVolume(), cc.audioEngine.getEffectsVolume());
-    }
-
-    public setMusicVolume(musicVolume?: number){
-        cc.audioEngine.setMusicVolume(musicVolume);
     }
 
     /**  */

@@ -7,13 +7,6 @@ export default class userData {
     //是否第一次进游戏
     static isFirstTime: boolean = true;
 
-    //是否禁音
-    static mute: boolean = false;
-
-    //是否关闭音乐
-    static MusinOn: boolean = false;
-    //是否关闭音效
-    static SoundOn: boolean = false;
     //是否震动
     static vibrationOn: boolean = false;
 
@@ -88,27 +81,6 @@ export default class userData {
         this.saveLocalData();
     }
 
-    static setSwitchOn(isOn: boolean = false, switchId) {
-        if (switchId == 1) {
-            this.SoundOn = isOn;
-        } else if (switchId == 2) {
-            this.MusinOn = isOn;
-        } else if (switchId == 3) {
-            this.vibrationOn = isOn;
-        }
-        this.saveLocalData()
-    }
-
-    static getSwitchOn(switchId) {
-        if (switchId == 1) {
-            return this.SoundOn;
-        } else if (switchId == 2) {
-            return this.MusinOn;
-        } else if (switchId == 3) {
-            return this.vibrationOn;
-        }
-    }
-
     static getConfigData() {
         for (let i = 0; i < this.userItem.length; i++) {
             var num = configData.itemData[i]["initialNumber"]
@@ -135,8 +107,6 @@ export default class userData {
             this.closeBanner = userData.closeBanner || 0;
             this.showInsert = userData.showInsert || 0;
             this.isFirstTime = false;
-            this.MusinOn = userData.MusinOn || false;
-            this.SoundOn = userData.SoundOn || false;
             this.vibrationOn = userData.vibrationOn || false;
             this.haveNewGiftBag = userData.haveNewGiftBag;
             this.isDayGiftBagBtn = userData.isDayGiftBagBtn;
@@ -152,8 +122,6 @@ export default class userData {
             this.lastLoginTime = Date.now();
             this.closeBanner = 0;
 
-            this.MusinOn = false;
-            this.SoundOn = false;
             this.vibrationOn = false;
 
             this.haveNewGiftBag = true;
@@ -200,9 +168,7 @@ export default class userData {
             lastLoginTime: this.lastLoginTime,
             closeBanner: this.closeBanner,
             showInsert: this.showInsert,
-            MusinOn: this.MusinOn,
             vibrationOn: this.vibrationOn,
-            SoundOn: this.SoundOn,
             haveNewGiftBag: this.haveNewGiftBag,
             isDayGiftBagBtn: this.isDayGiftBagBtn,
             todayOpenGiftBagTime: this.todayOpenGiftBagTime,

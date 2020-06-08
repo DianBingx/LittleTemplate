@@ -6,7 +6,6 @@ import TipManage from "../../UIFrame/TipsManager";
 import UIManager from "../../UIFrame/UIManager";
 import { GEventManager, Event_Name } from "../../UIFrame/GEventManager";
 import SoundManager from "../../UIFrame/SoundManager";
-import SpriteIndex from "../../UIFrame/SpriteIndex";
 import userData from "../../UIFrame/config/userData";
 
 const { ccclass, property } = cc._decorator;
@@ -52,9 +51,21 @@ export default class SetUI extends BaseUIForm {
 
 
     refushUI() {
-        for (let i = 0; i < 3; i++) {
-            let isOn = userData.getSwitchOn(i + 1);
-            this.setBtnStatus(i + 1, isOn);
+        let obj = SoundManager.getInstance().getVolumeToLocal();
+        if (obj) {
+            if (obj.effectVolume > 0) {
+                this.setBtnStatus(1, true);
+            } else {
+                this.setBtnStatus(1, false);
+            }
+            if (obj.musicVolume > 0) {
+                this.setBtnStatus(2, true);
+            } else {
+                this.setBtnStatus(2, false);
+            }
+        } else {
+            SoundManager.getInstance().init();
+            this.refushUI();
         }
     }
 
@@ -72,34 +83,38 @@ export default class SetUI extends BaseUIForm {
 
     onSoundBtnClick() {
         GEventManager.emit(Event_Name.GAME_PLAY_SOUNDS, 'sounds/click');
-        let soundOn = userData.getSwitchOn(1);
-        userData.setSwitchOn(!soundOn, 1);
-        let index = !soundOn ? 1 : 0;
-        this.soundNode.spriteFrame = this.soundNodeSF[index];
+        let obj = SoundManager.getInstance().getVolumeToLocal();
+        if (obj) {
+            if (obj.effectVolume > 0) {
+                this.setBtnStatus(1, false);
+                SoundManager.getInstance().setSoundVolume(obj.musicVolume, 0);
+            } else {
+                this.setBtnStatus(1, true);
+                SoundManager.getInstance().setSoundVolume(obj.musicVolume, 0.3);
+            }
+        }
     }
 
     onMusicBtnClick() {
         GEventManager.emit(Event_Name.GAME_PLAY_SOUNDS, 'sounds/click');
 
-        let soundOn = userData.getSwitchOn(2);
-        userData.setSwitchOn(!soundOn, 2);
-        let index = !soundOn ? 1 : 0;
-        this.musicNode.spriteFrame = this.musicNodeSF[index];
-
-        if (!soundOn) {
-            //播放音乐
-            SoundManager.getInstance().playBackGroundMusic();
-        } else {
-            //关闭
-            SoundManager.getInstance().stopMusic();
+        let obj = SoundManager.getInstance().getVolumeToLocal();
+        if (obj) {
+            if (obj.musicVolume > 0) {
+                this.setBtnStatus(2, false);
+                SoundManager.getInstance().setSoundVolume(0, obj.effectVolume);
+            } else {
+                this.setBtnStatus(2, true);
+                SoundManager.getInstance().setSoundVolume(0.3, obj.effectVolume);
+            }
         }
     }
 
     onVibrationBtnClick() {
         GEventManager.emit(Event_Name.GAME_PLAY_SOUNDS, 'sounds/click');
 
-       let soundOn = userData.getSwitchOn(3);
-        userData.setSwitchOn(!soundOn, 3);
+        let soundOn = userData.vibrationOn;
+        userData.vibrationOn = !soundOn;
         let index = !soundOn ? 1 : 0;
         this.vibrationNode.spriteFrame = this.vibrationNodeSF[index];
     }

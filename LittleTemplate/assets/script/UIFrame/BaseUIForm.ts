@@ -70,7 +70,7 @@ export default class BaseUIForm extends cc.Component {
             this.ShowPopUpAnimation(() => {
                 UIMaskManager.getInstance().showMask(this.UIType.UIForm_LucencyType, this.MaskType.IsEasing, this.MaskType.EasingTime);
             });
-        }else{
+        } else {
             this.node.active = true;
         }
     }
@@ -80,11 +80,11 @@ export default class BaseUIForm extends cc.Component {
     public Hiding() {
         if (this.UIType.UIForms_Type == UIFormType.PopUp) {
             UIMaskManager.getInstance().removeMaskWindow(this.node);
-            
+
             this.HidePopUpAnimation(() => {
                 this.node.active = false;
             });
-        }else{
+        } else {
             this.node.active = false;
         }
     }
@@ -117,39 +117,20 @@ export default class BaseUIForm extends cc.Component {
      */
     public ShowPopUpAnimation(callback: Function) {
 
-        let durationTime = 0.01;
-        this.node.stopActionByTag(998);
-        let showAction: cc.FiniteTimeAction = cc.spawn(
-            cc.scaleTo(durationTime, 1, 1).easing(cc.easeBackOut()),
-            cc.fadeIn(durationTime)
-        );
-
-        showAction = cc.sequence(showAction,
-            cc.callFunc(function () {
-                callback();
-            })
-        );
-        showAction.setTag(998);
-
-        this.node.runAction(showAction);
-
+        let durationTime = 0.1;
+        cc.tween(this.node)
+            .to(durationTime, { scale: 1.1, opacity: 200 })
+            .to(0.05, { scale: 1, opacity: 255 }, { easing: 'sineOutIn' })
+            .call(() => { callback() })
+            .start();
     }
     public HidePopUpAnimation(callback: Function) {
         let durationTime = 0.2;
-        this.node.stopActionByTag(997);
-        let showAction: cc.FiniteTimeAction = cc.spawn(
-            cc.scaleTo(durationTime, 0.3, 0.3).easing(cc.easeBackIn()),
-            cc.fadeOut(durationTime)
-        );
-
-        showAction = cc.sequence(showAction,
-            cc.callFunc(function () {
-                callback();
-            })
-        );
-        showAction.setTag(997);
-
-        this.node.runAction(showAction);
+        cc.tween(this.node)
+            .to(0.05, { scale: 1.1, opacity: 200 })
+            .to(durationTime, { scale: 0.2, opacity: 20 }, { easing: 'sineInOut' })
+            .call(() => { callback() })
+            .start();
     }
 
     /**
