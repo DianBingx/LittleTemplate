@@ -22,22 +22,16 @@ export default class SoundManager {
         }
     }
     /** 播放背景音乐 */
-    public async playBackGroundMusic(url: string = 'sound/bgm', volume: number = 0.3) {
+    public async playBackGroundMusic(url: string = 'sound/bgm') {
         let sound = await CocosHelper.loadRes(url, cc.AudioClip) as cc.AudioClip;
-        if (volume != undefined) {
-            cc.audioEngine.setMusicVolume(volume);
-        }
         cc.audioEngine.playMusic(sound, true);
 
     }
 
     /** 播放音效,不用担心会重复loadRes会消耗网络, 有缓存 */
-    public async playEffectMusic(url: string, volume: number = 0.2) {
+    public async playEffectMusic(url: string) {
         if (!url || url.length === 0) return;
         let sound = await CocosHelper.loadRes(url, cc.AudioClip) as cc.AudioClip;
-        if (volume != undefined) {
-            cc.audioEngine.setEffectsVolume(volume);
-        }
         cc.audioEngine.playEffect(sound, false);
     }
 
