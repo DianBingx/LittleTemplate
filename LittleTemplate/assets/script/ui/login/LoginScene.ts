@@ -33,6 +33,7 @@ export default class LoginScene extends cc.Component {
             this.gamepro.node.parent.active = false;
             this.btnStartGame.parent.active = true;
             this.playBtnTween();
+            this.node.on(cc.Node.EventType.TOUCH_START, this.onClickEvent_startGame, this);
         }
 
     }
@@ -88,7 +89,6 @@ export default class LoginScene extends cc.Component {
             this.btnStartGame.parent.active = true;
             this.playBtnTween();
             this.node.on(cc.Node.EventType.TOUCH_START, this.onClickEvent_startGame, this);
-
         }
     }
 

@@ -32,6 +32,11 @@ export default class HallUI extends BaseUIForm {
         UIManager.GetInstance().ShowUIForms("prefab/hall/SignUI");
     }
 
+    onClickEvent_openLuckDraw(){
+        GEventManager.emit(Event_Name.GAME_PLAY_SOUNDS, 'sounds/click');
+        UIManager.GetInstance().ShowUIForms("prefab/hall/LuckDrawUI");
+    }
+
     onClickEvent_openSetting(){
         GEventManager.emit(Event_Name.GAME_PLAY_SOUNDS, 'sounds/click');
         UIManager.GetInstance().ShowUIForms("prefab/common/SetUI");
