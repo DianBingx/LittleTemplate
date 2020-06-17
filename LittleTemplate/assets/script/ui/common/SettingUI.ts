@@ -71,7 +71,7 @@ export default class SetUI extends BaseUIForm {
 
     setBtnStatus(id, isOn) {
         let index = 0;
-        if (isOn) index = 1;
+        if (!isOn) index = 1;
         if (id == 1) {
             this.soundNode.spriteFrame = this.soundNodeSF[index];
         } else if (id == 2) {
@@ -127,13 +127,11 @@ export default class SetUI extends BaseUIForm {
         GEventManager.emit(Event_Name.GAME_PLAY_SOUNDS, 'sounds/click');
         this.CloseUIForm();
 
-        // let _cc: any = cc;
-        // _cc.Global.nativeAdMGR.nativeInnerClose();
+        // GEventManager.emit(Event_Name.OPEN_AD_NATIVE_INSERT, true);
     }
 
     openAd() {
-        let _cc: any = cc;
-        _cc.Global.ad.showNativeAd({ key: 'insert', callbackKey: "insert", renderShowKey: "insert", ctrlKey: 'insert' });
+        // GEventManager.emit(Event_Name.OPEN_AD_NATIVE_INSERT, true);
     }
 
     onEnable() {

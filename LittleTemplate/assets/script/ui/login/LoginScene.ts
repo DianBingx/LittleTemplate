@@ -35,6 +35,7 @@ export default class LoginScene extends cc.Component {
             this.playBtnTween();
             this.node.on(cc.Node.EventType.TOUCH_START, this.onClickEvent_startGame, this);
         }
+        SoundManager.getInstance().init();
 
     }
 
@@ -43,6 +44,8 @@ export default class LoginScene extends cc.Component {
     }
 
     startLoad() {
+        cc.log(window);
+        cc.log(window['qq']);
         this.tpro = 0;
         //获取用户数据
         userData.getLocalData();
