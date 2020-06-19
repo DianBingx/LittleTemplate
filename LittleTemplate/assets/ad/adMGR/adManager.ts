@@ -656,6 +656,99 @@ export default class adManager {
             return
         }
     }
+    //分享
+    static share({title=undefined,imageUrl=undefined,query=undefined,path=undefined,success=e=>null,fail=(code,res)=>console.warn('share error',code,res),complete=e=>null}){
+        let obj;
+        let api;
+        if(this.platId=='vivo'){
+            obj={
+                success,fail,complete
+            }
+            api="share"
+        }else if(this.platId=='qq'){
+            obj={
+                title,imageUrl,query,success,fail,complete
+            }
+            api="shareAppMessage"
+        }else if(this.platId=='wx'){
+            obj={
+                success,fail,complete
+            }
+            api="showShareMenu"
+        }else if(this.platId=='tt'){
+            obj={
+                success,fail
+            }
+            api="showShareMenu"
+        }else if(this.platId == "swan"){
+            //页面 path，必须是以 / 开头的完整路径。如果 path 中的参数包含中文字符，需通过 encodeURIComponent 对中文字符进行编码。	
+            //Web 态小程序运行在微信、QQ、QQ 空间、微博、百度 Hi 内时配置的分享 path 不生效，此时分享 path 为当前页面的路径
+            obj={
+                title,path,imageUrl,query,success,fail
+            }
+            api="openShare"
+        }else{
+            return  console.log('oppo不支持分享')
+        }
+        window[this.plat][api](obj);
+    }
+    static login(){
+        if(this.platId=='wx'){
+         this.wxLogin();   
+        }
+    }
+    static wxLogin(success=e=>null,fail=(code,res)=>console.warn('share error',code,res),complete=e=>null){
+        window[this.plat].getSetting({
+            success(res)
+            {
+                // 已授权
+                if (res.authSetting["scope.userInfo"])
+                {
+                    // 进入下一步登录
+                }
+                // 显示授权按钮
+                else
+                {
+                    let sysInfo = window[this.plat].getSystemInfoSync();
+                    let button = window[this.plat].createUserInfoButton({
+                        type: "text",
+                        text: "微信登录",
+                        style: {
+                            left: sysInfo.windowWidth / 2 - 50,
+                            top: sysInfo.windowHeight / 2 - 30,
+                            width: 100,
+                            height: 60,
+                            backgroundColor: "#c7a976",
+                            color: "#5c5941",
+                            borderColor: "#5c5941",
+                            textAlign: "center",
+                            fontSize: 16,
+                            borderWidth: 4,
+                            borderRadius: 4,
+                            lineHeight: 60,
+                        }
+                    });
+                    button.onTap(function(res)
+                    {
+                        if (res.userInfo)
+                        {
+                            button.destroy();
+                            // 进入下一步，比如【选择服务器】
+                        }
+                        else
+                        {
+                            window[this.plat].showModal({
+                                title: "温馨提示",
+                                content: "您的用户信息登录游戏。",
+                                showCancel: false,
+                            });
+                        }
+                    });
+                    button.show();
+                }
+            }
+        });
+    }
     /**创建桌面图标*/
     static installShortcut(callback = e => e) {
         console.log("installShortcut");
